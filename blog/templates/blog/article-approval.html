@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Article Approval</title>
+</head>
+<body>
+
+<h3>Article Approval</h3>
+
+{% for article in articles %}
+<hr>
+<p>
+  <h4>{{ article.title }}</h4>
+  <p>{{ article.content }}</p>
+  <button onclick="updateArticle('{{ article.id }}', 'published')">Approve</button>
+  <button onclick="updateArticle('{{ article.id }}', 'archived')">Reject</button>
+</p>
+{% endfor %}
+
+<script>
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i=0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length+1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  async function updateArticle(articleId, newStatus) {
+    const csrfToken = getCookie('csrftoken');
+
+    fetch(`{{ request.path }}${articleId}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify({status: newStatus}),
+    })
+    .then(response => {
+      if (!response.ok) {
+        alert('Failed to update article.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+
+</body>
+</html>

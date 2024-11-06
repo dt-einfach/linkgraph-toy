@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid;
+      text-align: center;
+    }
+
+    th, td {
+      padding: 0.5rem 1rem;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <table>
+    <thead>
+    <tr>
+      <th>Writer</th>
+
+      <th>Total Articles Written</th>
+
+      <th>Total Articles Written Last 30 Days</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for summary in writers_summary %}
+    <tr>
+      <td>{{ summary.writer }}</td>
+
+      <td>{{ summary.total_art_written }}</td>
+
+      <td>{{ summary.total_art_written_last_30_d }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

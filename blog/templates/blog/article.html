@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Article</title>
+  <style>
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3>Article Detail</h3>
+
+  <form id="article-form">
+    {% csrf_token %}
+
+    <div>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" placeholder="Latest news" value="{{ article.title }}">
+    </div>
+
+    <div>
+      <label for="content">Content</label>
+      <textarea id="content" name="content" rows="10">{{ article.content }}</textarea>
+    </div>
+
+    <div>
+      <label for="created_at">Created At</label>
+      <input type="text" id="created_at" value="{{ article.created_at }}" readonly>
+    </div>
+
+    <div>
+      <label for="status">Status</label>
+      <input type="text" id="status" value="{{ article.status }}" readonly>
+    </div>
+
+    <div>
+      <label for="written_by">Written By</label>
+      <input type="text" id="written_by" value="{{ article.written_by.name }}" readonly>
+    </div>
+
+    <div>
+      <label for="edited_by">Edited By</label>
+      <input type="text" id="edited_by" value="{{ article.edited_by.name }}" readonly>
+    </div>
+
+    <input type="submit" value="Save">
+  </form>
+
+</div>
+
+<script>
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i=0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length+1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  document.getElementById('article-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const csrfToken = getCookie('csrftoken');
+
+    const formData = new FormData(this);
+
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    fetch('{{ request.path }}', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Article updated successfully!');
+      } else {
+        alert('Failed to update article.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+</script>
+
+</body>
+</html>
